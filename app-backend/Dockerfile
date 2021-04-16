@@ -1,0 +1,16 @@
+FROM php:7.2.5-fpm
+RUN apt-get update \
+	&& apt-get install -y openssl libmcrypt-dev nano \
+	&& rm -rf /var/lib/apt/lists/* \
+	&& pecl install mcrypt-1.0.1 \
+	&& docker-php-ext-enable mcrypt
+RUN curl -sS https://getcomposer.org/installer -o composer-setup.php && \
+    php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+RUN docker-php-ext-install pdo mbstring pdo_mysql
+WORKDIR /app
+COPY . /app
+
+
+
+CMD php artisan serve --host=0.0.0.0 --port=8000
+EXPOSE 8000
